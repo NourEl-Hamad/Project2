@@ -19,6 +19,7 @@ class RecipeListPage extends StatefulWidget {
 
 class _RecipeListPageState extends State<RecipeListPage> {
   List<Map<String, dynamic>> recipes = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -41,22 +42,30 @@ class _RecipeListPageState extends State<RecipeListPage> {
             'instructions': recipe['instructions'] ?? 'No instructions available',
             'ingredients': recipe['ingredients'] ?? 'No ingredients available',
           }).toList();
+          isLoading = false;
         });
       } else {
-        print('Failed to load recipes');
         throw Exception('Failed to load recipes');
       }
     } catch (error) {
       print('Error: $error');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Recipes for ${widget.categoryName}')),
-      body: recipes.isEmpty
+      appBar: AppBar(
+        title: Text('Recipes for ${widget.categoryName}'),
+        backgroundColor: Colors.orangeAccent,
+      ),
+      body: isLoading
           ? Center(child: CircularProgressIndicator())
+          : recipes.isEmpty
+          ? Center(child: Text('No recipes available', style: TextStyle(fontSize: 18)))
           : ListView.builder(
         itemCount: recipes.length,
         itemBuilder: (context, index) {
@@ -87,12 +96,13 @@ class _RecipeListPageState extends State<RecipeListPage> {
             child: Card(
               elevation: 4,
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.network(
                         recipes[index]['image']!,
                         width: 100,
@@ -115,9 +125,10 @@ class _RecipeListPageState extends State<RecipeListPage> {
                             ),
                           ),
                           SizedBox(height: 8),
-
-                          SizedBox(height: 8),
-
+                          Text(
+                            'Tap to view details',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),

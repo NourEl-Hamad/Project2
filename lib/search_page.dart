@@ -24,7 +24,6 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
     fetchCategories();
   }
 
-  // Fetch Categories from the server
   Future<void> fetchCategories() async {
     setState(() {
       isLoading = true;
@@ -69,7 +68,6 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
     }
   }
 
-  // Fetch Recipes based on the selected category
   Future<void> fetchRecipes(int categoryId) async {
     setState(() {
       isLoading = true;
@@ -118,16 +116,14 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
     }
   }
 
-  // Handle category selection
   void handleCategoryChange(String? categoryName, int categoryId) {
     setState(() {
       selectedCategory = categoryName;
-      selectedRecipe = null; // Clear previously selected recipe
+      selectedRecipe = null;
     });
-    fetchRecipes(categoryId); // Fetch recipes for selected category
+    fetchRecipes(categoryId);
   }
 
-  // Handle recipe selection
   void handleRecipeChange(String? recipeName) {
     setState(() {
       selectedRecipe = recipeName;
@@ -138,14 +134,14 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orangeAccent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Search Recipes'),
-            // Show loading indicator in AppBar when isLoading is true
             if (isLoading)
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // Set the color here
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 strokeWidth: 3,
               ),
           ],
@@ -154,62 +150,72 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row to display both dropdowns side by side
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Dropdown for Category selection
-                Expanded(
-                  child: DropdownButton<String>(
-                    hint: const Text("Select Category"),
-                    value: selectedCategory,
-                    onChanged: (categoryName) {
-                      final selectedCategoryData = categories.firstWhere(
-                            (category) => category['name'] == categoryName,
-                        orElse: () => {},
-                      );
-                      if (selectedCategoryData.isNotEmpty) {
-                        handleCategoryChange(categoryName, selectedCategoryData['id']);
+            // Category and Recipe Dropdowns
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.grey[200],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Category dropdown
+                  Expanded(
+                    child: DropdownButton<String>(
+                      hint: const Text("Select Category"),
+                      value: selectedCategory,
+                      onChanged: (categoryName) {
+                        final selectedCategoryData = categories.firstWhere(
+                              (category) => category['name'] == categoryName,
+                          orElse: () => {},
+                        );
+                        if (selectedCategoryData.isNotEmpty) {
+                          handleCategoryChange(categoryName, selectedCategoryData['id']);
+                        }
+                      },
+                      items: categories.map<DropdownMenuItem<String>>((category) {
+                        return DropdownMenuItem<String>(
+                          value: category['name'],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Text(category['name']),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Recipe dropdown
+                  Expanded(
+                    child: DropdownButton<String>(
+                      hint: const Text("Select Recipe"),
+                      value: selectedRecipe,
+                      onChanged: selectedCategory != null
+                          ? (recipeName) {
+                        handleRecipeChange(recipeName);
                       }
-                    },
-                    items: categories.map<DropdownMenuItem<String>>((category) {
-                      return DropdownMenuItem<String>(
-                        value: category['name'],
-                        child: Text(category['name']),
-                      );
-                    }).toList(),
+                          : null,
+                      items: selectedCategory != null && recipes.isNotEmpty
+                          ? recipes.map<DropdownMenuItem<String>>((recipe) {
+                        return DropdownMenuItem<String>(
+                          value: recipe['name'],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Text(recipe['name']),
+                          ),
+                        );
+                      }).toList()
+                          : [],
+                    ),
                   ),
-                ),
-
-                const SizedBox(width: 16), // Space between the dropdowns
-
-                // Dropdown for Recipe selection (show recipes if category is selected)
-                Expanded(
-                  child: DropdownButton<String>(
-                    hint: const Text("Select Recipe"),
-                    value: selectedRecipe,
-                    onChanged: selectedCategory != null
-                        ? (recipeName) {
-                      handleRecipeChange(recipeName);
-                    }
-                        : null, // Disable until a category is selected
-                    items: selectedCategory != null && recipes.isNotEmpty
-                        ? recipes.map<DropdownMenuItem<String>>((recipe) {
-                      return DropdownMenuItem<String>(
-                        value: recipe['name'],
-                        child: Text(recipe['name']),
-                      );
-                    }).toList()
-                        : [],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 16),
-
-            // Show error or message
+            // Display Error or Message
             if (errorMessage.isNotEmpty)
               Text(
                 errorMessage,
@@ -239,6 +245,10 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                         },
                         child: Card(
                           margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 6,
                           child: ListTile(
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
@@ -252,11 +262,12 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                               ),
                             ),
                             title: Text(recipe['name']!),
+                            subtitle: Text('Tap to view details', style: TextStyle(color: Colors.grey[600])),
                           ),
                         ),
                       );
                     }
-                    return const SizedBox(); // Avoid rendering non-matching recipes
+                    return const SizedBox();
                   },
                 ),
               )

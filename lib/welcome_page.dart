@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'search_page.dart';  // Make sure to import the SearchPage
+import 'search_page.dart';  
 import 'category_list_page.dart';
 
 class WelcomePage extends StatelessWidget {

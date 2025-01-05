@@ -47,7 +47,11 @@ class _CategoryListPageState extends State<CategoryListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Categories')),
+      appBar: AppBar(
+        title: Text('Categories'),
+        backgroundColor: Colors.teal,
+        elevation: 0,  // Remove shadow to make the AppBar sleek
+      ),
       body: categories.isEmpty
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -66,15 +70,18 @@ class _CategoryListPageState extends State<CategoryListPage> {
               );
             },
             child: Card(
-              elevation: 4,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    // Category image
+                    // Category image with border
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.network(
                         categories[index]['image'] as String,  // Cast to String
                         width: 100,
@@ -85,13 +92,14 @@ class _CategoryListPageState extends State<CategoryListPage> {
                       ),
                     ),
                     SizedBox(width: 16),
-                    // Category name
+                    // Category name with stylized text
                     Expanded(
                       child: Text(
                         categories[index]['name'] as String,  // Cast to String
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
+                          color: Colors.teal.shade800,  // Styled text color
                         ),
                       ),
                     ),

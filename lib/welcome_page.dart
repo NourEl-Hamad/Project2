@@ -7,12 +7,12 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand, // Ensures the background image fills the screen
+        fit: StackFit.expand, 
         children: [
           // Background image
           Image.network(
             "https://media.istockphoto.com/id/1457433817/photo/group-of-healthy-food-for-flexitarian-diet.jpg?s=2048x2048&w=is&k=20&c=rRlOrFqCQn8kBDwvZnN75XFxiD0CA6S2LkgVKQRYJ3k=", // Use high-resolution image
-            fit: BoxFit.cover, // Fills the screen while maintaining aspect ratio
+            fit: BoxFit.cover, 
           ),
           // Centered buttons
           Center(
@@ -31,7 +31,7 @@ class WelcomePage extends StatelessWidget {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                SizedBox(height: 20),  // Space between the buttons
+                SizedBox(height: 20),  
       ElevatedButton(
         onPressed: () {
           Navigator.push(
